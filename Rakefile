@@ -69,6 +69,15 @@ task :build, [:target] => [:cmake] do |_, args|
   system "ccache -s" if ENV['USE_CCACHE']
 end
 
+desc 'Install the software'
+task :install, [:dir] => [:init] do |_, args|
+  if ENV['PLATFORM'] == 'android'
+    Rake::Task['gradle'].invoke('publishToMavenLocal')
+    next
+  end
+  system "#{args[:dir] && !ENV['OS'] ? "DESTDIR=#{args[:dir]}" : ''} #{build_target('install')}" or abort
+end
+
 desc 'Test the software'
 task :test => [:init] do
   if ENV['PLATFORM'] == 'android'

@@ -92,6 +92,9 @@ jobs:
       - name: Build
         run: script/dockerized.sh ${PLATFORM/-*} rake build
         if: matrix.platform != 'linux-clang-format'
+      - name: Install
+        run: script/dockerized.sh ${PLATFORM/-*} rake install[$GITHUB_WORKSPACE/stage]
+        if: matrix.platform != 'linux-clang-tidy' && matrix.platform != 'linux-clang-format'
       - name: Test
         run: script/dockerized.sh ${PLATFORM/-*} rake test
         if: startsWith(matrix.platform, 'linux') || matrix.platform == 'android'
@@ -148,6 +151,8 @@ jobs:
         run: rake cmake
       - name: Build
         run: rake build
+      - name: Install
+        run: sudo -E rake install
       - name: Test
         run: rake test
         if: startsWith(matrix.platform, 'macOS')
@@ -195,6 +200,8 @@ jobs:
         run: rake cmake
       - name: Build
         run: rake build
+      - name: Install
+        run: rake install
       - name: Test
         run: rake test
         if: matrix.graphics-api != 'OpenGL'
